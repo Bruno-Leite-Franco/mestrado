@@ -1,0 +1,5 @@
+[
+    {"text": "a", "label": "pos"},
+    {"text": "b", "label": "neg"},
+    {"text": "c", "label": "pos"}
+]
