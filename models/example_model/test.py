@@ -31,12 +31,13 @@ def main(args=None):
         data = load_data(test_path)
         predictions = [majority_label for _ in data]
         gold = [inst['label'] for inst in data]
-        score = score_module.score(predictions, gold)
+        instance_scores = [score_module.score(p, g) for p, g in zip(predictions, gold)]
+        score = sum(instance_scores) / len(instance_scores) if instance_scores else 0.0
         out_file = results_dir / f'answers_{test_path.stem}.tsv'
         with open(out_file, 'w') as fw:
-            fw.write('input\tprediction\tgold\n')
-            for inst, pred in zip(data, predictions):
-                fw.write(f"{inst['text']}\t{pred}\t{inst['label']}\n")
+            fw.write('input\tprediction\tgold\tscore\n')
+            for inst, pred, inst_score in zip(data, predictions, instance_scores):
+                fw.write(f"{inst['text']}\t{pred}\t{inst['label']}\t{inst_score}\n")
             fw.write(f"# score={score}\n")
         print(f"{test_path.stem} score: {score}")
 

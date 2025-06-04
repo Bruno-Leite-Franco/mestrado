@@ -32,7 +32,11 @@ def main(args=None):
     spec.loader.exec_module(score_module)
     predictions = [majority_label for _ in dev_data]
     gold = [inst['label'] for inst in dev_data]
-    score = score_module.score(predictions, gold)
+    if gold:
+        total = sum(score_module.score(p, g) for p, g in zip(predictions, gold))
+        score = total / len(gold)
+    else:
+        score = 0.0
 
     results_dir = Path('models') / opts.model / f'results_{dataset_dir.name}'
     results_dir.mkdir(parents=True, exist_ok=True)
